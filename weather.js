@@ -17,6 +17,33 @@ const saveToken = async (token) => {
   }
 };
 
+const saveCity = async (city) => {
+  if (!city.length) {
+    printError('City is required');
+    return;
+  }
+  try {
+    await saveKeyValue(TOKEN_DICTIONARY.city, city);
+    printSuccess('City saved');
+  } catch (error) {
+    printError(error);
+  }
+};
+
+const getForcast = async () => {
+  try {
+    const weather = await getWeather('minsk');
+  } catch (e) {
+    if (e?.response?.status == 404) {
+      printError('Wrong city');
+    } else if (e?.response?.status == 404) {
+      printError('Wrong token');
+    } else {
+      printError(e?.message);
+    }
+  }
+};
+
 const initCLI = () => {
   const args = getArgs(process.argv);
 
@@ -24,12 +51,12 @@ const initCLI = () => {
     printHelp();
   }
   if (args.s) {
-    // save city
+    saveCity(args.s);
   }
   if (args.t) {
     return saveToken(args.t);
   }
-  getWeather('minsk');
+  getForcast();
 };
 
 initCLI();
